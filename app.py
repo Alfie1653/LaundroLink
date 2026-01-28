@@ -11,6 +11,7 @@ import urllib
 from flask_wtf.csrf import CSRFProtect
 csrf = CSRFProtect()
 
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_secret")
 
