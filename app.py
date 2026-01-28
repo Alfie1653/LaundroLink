@@ -8,9 +8,11 @@ import secrets
 import uuid
 from datetime import datetime, timedelta
 import urllib
+from flask_wtf.csrf import CSRFProtect
+csrf = CSRFProtect()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRTE_KEY", "dev_secret")
+app.secret_key = os.environ.get("SECRET_KEY", "dev_secret")
 
 # =========================
 # REVIEW TOKENS
@@ -18,7 +20,7 @@ app.secret_key = os.environ.get("SECRTE_KEY", "dev_secret")
 
 def generate_review_token(provider_id):
     token = str(uuid.uuid4())
-    expires_at = datetime.now() + timedelta(days=2)  # link valid for 48 hours
+    expires_at = datetime.utcnow() + timedelta(days=2)  # link valid for 48 hours
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -144,9 +146,21 @@ def login():
 # -------------------------
 @app.route("/owner_dashboard/<int:provider_id>", methods=["GET", "POST"])
 def owner_dashboard(provider_id):
+
+    # 🔐 AUTHORIZATION CHECK (CRITICAL)
+    if session.get("provider_id") != provider_id:
+        flash("Unauthorized access.", "error")
+        return redirect("/login")
+
     db = get_db_connection()
-    provider = db.execute("SELECT * FROM providers WHERE id = ?", (provider_id,)).fetchone()
-    feedbacks = db.execute("SELECT * FROM ratings WHERE provider_id = ? ORDER BY created_at DESC", (provider_id,)).fetchall()
+    provider = db.execute(
+        "SELECT * FROM providers WHERE id = ?", (provider_id,)
+    ).fetchone()
+
+    feedbacks = db.execute(
+        "SELECT * FROM ratings WHERE provider_id = ? ORDER BY created_at DESC",
+        (provider_id,)
+    ).fetchall()
     db.close()
 
     if not provider:
@@ -166,9 +180,9 @@ def owner_dashboard(provider_id):
         password_hash = generate_password_hash(password) if password else provider["password"]
 
         file = request.files.get("profile_pic")
-        if file and file.filename != "":
+        if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            unique_filename = f"{name.replace(' ','_')}_{filename}"
+            unique_filename = f"{name.replace(' ', '_')}_{filename}"
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
             file.save(filepath)
         else:
@@ -177,20 +191,31 @@ def owner_dashboard(provider_id):
         db = get_db_connection()
         db.execute("""
             UPDATE providers
-            SET name=?, area=?, price_per_kg=?, delivery_fee=?, services=?, phone=?, country_code=?, description=?, profile_pic=?, password=?
+            SET name=?, area=?, price_per_kg=?, delivery_fee=?, services=?, phone=?, 
+                country_code=?, description=?, profile_pic=?, password=?
             WHERE id=?
-        """, (name, area, price, delivery, services, phone, country_code, description, unique_filename, password_hash, provider_id))
+        """, (
+            name, area, price, delivery, services, phone,
+            country_code, description, unique_filename,
+            password_hash, provider_id
+        ))
         db.commit()
         db.close()
-        flash("Details updated successfully!", "success")
-        return redirect(url_for('owner_dashboard', provider_id=provider_id))
 
-    return render_template("owner_dashboard.html", provider=provider, feedbacks=feedbacks)
+        flash("Details updated successfully!", "success")
+        return redirect(url_for("owner_dashboard", provider_id=provider_id))
+
+    return render_template(
+        "owner_dashboard.html",
+        provider=provider,
+        feedbacks=feedbacks
+    )
+
 
 # -------------------------
 # SERVICE PAGE
 # -------------------------
-@app.route("/service/<int:provider_id>", methods=["GET", "POST"])
+@app.route("/service/<int:provider_id>", methods=["GET",])
 def service_page(provider_id):
     db = get_db_connection()
     provider = db.execute("SELECT * FROM providers WHERE id = ?", (provider_id,)).fetchone()
@@ -243,7 +268,9 @@ def request_service(provider_id):
     )
 
     encoded_message = urllib.parse.quote(message)
-    whatsapp_url = f"https://wa.me/{provider['phone']}?text={encoded_message}"
+    phone = provider["phone"].replace("+", "").replace(" ", "")
+    whatsapp_url = f"https://wa.me/{phone}?text={encoded_message}"
+
 
     return redirect(whatsapp_url)
 
