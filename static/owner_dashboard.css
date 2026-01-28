@@ -1,0 +1,203 @@
+/* =========================
+   OWNER DASHBOARD CSS
+   ========================= */
+
+/* Page wrapper */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #28313B, #485461);
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Dashboard container */
+.dashboard-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+.dashboard-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00796b;
+}
+
+/* =========================
+   FORM LAYOUT
+   ========================= */
+
+.form-grid {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+.form-left,
+.form-right {
+    flex: 1;
+    min-width: 280px;
+}
+
+/* =========================
+   LABELS & INPUTS
+   ========================= */
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #00796b;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="tel"],
+textarea,
+select {
+    width: 100%;
+    padding: 9px 11px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* =========================
+   PHONE GROUP
+   ========================= */
+
+.phone-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.phone-group select {
+    flex: 0 0 110px;
+}
+
+.phone-group input[type="tel"] {
+    flex: 1;
+}
+
+/* =========================
+   PROFILE IMAGE UPLOAD
+   ========================= */
+
+.upload-box {
+    border: 2px dashed #00796b;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    background-color: #f0fdf4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.upload-box p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.upload-box input[type="file"] {
+    cursor: pointer;
+}
+
+.profile-preview {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* =========================
+   UPDATE BUTTON (RIGHT COLUMN)
+   ========================= */
+
+.right-column-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-update {
+    background-color: #00796b;
+    color: #ffffff;
+    border: none;
+    padding: 11px 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-update:hover {
+    background-color: #004d40;
+}
+
+/* =========================
+   RATINGS SECTION
+   ========================= */
+
+.ratings-section {
+    margin-top: 45px;
+}
+
+.ratings-section h3 {
+    margin-bottom: 15px;
+    color: #00796b;
+}
+
+.rating-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 14px;
+    background-color: #fafafa;
+}
+
+.rating-card p {
+    margin: 6px 0;
+}
+
+/* =========================
+   LOGOUT LINK
+   ========================= */
+
+.dashboard-container p a {
+    color: #00796b;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.dashboard-container p a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE (MOBILE)
+   ========================= */
+
+@media (max-width: 768px) {
+    .form-grid {
+        flex-direction: column;
+    }
+
+    .right-column-actions {
+        margin-top: 25px;
+    }
+}

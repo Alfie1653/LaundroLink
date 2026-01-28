@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - Campus Laundry</title>
+  <link rel="stylesheet" href="/static/login_style.css">
+  <style>
+    /* Flash message styling for this page */
+    .flash-message {
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 14px;
+        animation: fadeOut 0.5s ease 4.5s forwards; /* fade out after 4.5s */
+    }
+
+    .flash-message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .flash-message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .flash-message.info {
+        background-color: #cce5ff;
+        color: #004085;
+        border: 1px solid #b8daff;
+    }
+
+    @keyframes fadeOut {
+        to { opacity: 0; display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO / PAGE TITLE -->
+  <div class="hero">
+    <h1>Owner Login</h1>
+    <p>Login with your registered phone number to manage your laundry service</p>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div class="form-container">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/login" class="login-form">
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+      <button type="submit" class="btn-register">Login</button>
+
+      <!-- Forgot Password Link -->
+      <p style="text-align:center; margin-top:10px;">
+        <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+      </p>
+    </form>
+
+    <p style="margin-top: 15px; text-align: center;">
+      Don't have an account? <a href="/register">Register your laundry service</a>
+    </p>
+  </div>
+
+  <!-- Optional JS fallback to remove flash messages completely -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(() => {
+            const flashes = document.querySelectorAll(".flash-message");
+            flashes.forEach(f => f.remove());
+        }, 5000);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ provider.name }} - Campus Laundry</title>
+  <link rel="stylesheet" href="/static/service_page.css">
+</head>
+<body>
+
+  <!-- PAGE WRAPPER WITH SIDE MARGINS -->
+  <div class="page-wrapper">
+
+    <!-- SERVICE HERO / TITLE -->
+    <div class="service-hero">
+      <h1>{{ provider.name }}</h1>
+    </div>
+
+    <!-- SERVICE MAIN CONTAINER -->
+    <div class="service-container">
+      <!-- LEFT: PROFILE IMAGE -->
+      <div class="service-image">
+        <img src="{{ url_for('static', filename='uploads/' + provider.profile_pic) }}" alt="{{ provider.name }}">
+      </div>
+
+      <!-- RIGHT: INFO PANEL -->
+      <div class="service-info">
+        <div class="area-row" style="display: flex; align-items: center; gap: 10px;">
+          <h2 style="margin: 0;">Area:</h2>
+          <p class="place" style="margin: 0;">{{ provider.area }}</p>
+        </div>
+        <h2>Price</h2>
+        <p>KES {{ provider.price_per_kg }} per kg</p>
+
+        <h2>Pickup / Delivery</h2>
+        <p>
+          {% if provider.delivery_fee %}
+            Delivery available (KES {{ provider.delivery_fee }})  
+          {% else %}
+            Pickup available, no delivery fee  
+          {% endif %}
+        </p>
+
+        <h2>Services Offered</h2>
+        <p>{{ provider.services }}</p>
+
+        {% if provider.rating %}
+        <h2>Rating</h2>
+        <p>⭐ {{ provider.rating }}/5</p>
+        {% endif %}
+
+        <!-- ADDITIONAL INFO SECTION -->
+        <h2>Turnaround Time</h2>
+        <p>Most laundry is ready within 24–48 hours.</p>
+
+        <!-- REQUEST SERVICE BUTTON -->
+        <div class="service-action">
+          <a
+            href="https://wa.me/{{ provider.phone }}?text=Hello%20I%20found%20your%20laundry%20service%20on%20Campus%20Laundry%20Services.%20I%20would%20like%20to%20request%20laundry%20service."
+            target="_blank"
+            class="btn-request"
+          >
+            Request Service
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================
+         DESCRIPTION & FEEDBACK SECTIONS
+    ========================== -->
+    <div class="sections-container">
+
+      <!-- Laundry Description -->
+      <div class="section description-section">
+        <h2>Laundry Description</h2>
+        {% if provider.description %}
+          <p>{{ provider.description }}</p>
+        {% else %}
+          <p>No description provided yet.</p>
+        {% endif %}
+      </div>
+
+      <!-- Customer Feedback -->
+      <div class="section feedback-section">
+        <h2>Customer Feedback</h2>
+        {% if feedbacks %}
+          {% for f in feedbacks %}
+            <div class="feedback-item">
+              <p><strong>{{ f.customer_name }}:</strong> {{ f.comment }}</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No feedback yet.</p>
+        {% endif %}
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

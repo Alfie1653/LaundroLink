@@ -1,0 +1,203 @@
+/* ===============================
+   GLOBAL STYLES
+=============================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #28313B, #485461);
+  color: #222;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+/* ===============================
+   HERO SECTION
+=============================== */
+.hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero h1 {
+  color: #fff;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.hero .btn-register {
+  background-color: #00796b;
+  color: #fff;
+  padding: 14px 28px;
+  font-size: 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.hero .btn-register:hover {
+  background-color: #004d40;
+}
+
+/* ===============================
+   CARDS CONTAINER (flexbox, 5 cards max per row)
+=============================== */
+.cards-container {
+  width: 1360px;
+  display: flex;
+  flex-wrap: wrap;          /* extra cards jump to next row */
+  gap: 2px;                 /* 2px spacing between cards (both rows and columns) */
+  padding: 0 1px;           /* optional left/right padding */
+  margin: 0 auto;
+  justify-content: flex-start;
+}
+
+/* ===============================
+   CARD
+=============================== */
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  width: 250px;             /* fixed width */
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.14);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* ===============================
+   IMAGE + WISHLIST
+=============================== */
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 1px;              /* 1px spacing around image */
+  box-sizing: border-box;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+  border-radius: 14px;       /* match card radius */
+  border: 1px solid #00796b;
+  margin: 0;
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  padding: 8px 12px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ===============================
+   CARD INFO
+=============================== */
+.card-info {
+  padding: 16px 18px;
+  text-align: left;
+}
+
+.card-info h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.card-info .price {
+  color: #00796b;
+  font-weight: bold;
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+
+.card-info .rating {
+  color: #ff9800;
+  font-size: 15px;
+}
+
+/* ===============================
+   REQUEST BUTTON (HOVER REVEAL)
+=============================== */
+.card-action {
+  padding: 0 18px 22px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover .card-action {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-action a.btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background-color: #00796b;
+  color: #fff;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.card-action a.btn:hover {
+  background-color: #004d40;
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+@media (max-width: 1300px) {
+  .cards-container {
+    justify-content: center; /* center fewer cards on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 90%;             /* make cards responsive */
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero .btn-register {
+    font-size: 16px;
+    padding: 12px 22px;
+  }
+
+  .card-info h3 {
+    font-size: 20px;
+  }
+}

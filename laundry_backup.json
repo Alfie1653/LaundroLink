@@ -1,0 +1,28 @@
+{
+    "providers": [
+        {
+            "id": 1,
+            "name": "Bottle",
+            "country_code": "+254",
+            "area": "CBD",
+            "price_per_kg": 60.0,
+            "delivery_fee": 0.0,
+            "services": "IRONING",
+            "phone": "113503145",
+            "password": "scrypt:32768:8:1$cT6mFn7JafZTAWYU$461fba4759ce8f8cd8ce3e1f0e299e29272072b8676d20e28ca289b0bdd81e4578a58596ac518dceaccbab2db830ea34cf37abb4dfea6d4210c0238a024e45a4",
+            "description": "",
+            "profile_pic": "Bottle_Arsenal.webp",
+            "created_at": "2026-01-28 20:04:54"
+        }
+    ],
+    "ratings": [],
+    "review_tokens": [
+        {
+            "id": 1,
+            "provider_id": 1,
+            "token": "33a3992a-3878-4baa-8192-13590dd7bfe9",
+            "expires_at": "2026-01-30 13:21:54.842002",
+            "created_at": "2026-01-28 20:21:54"
+        }
+    ]
+}

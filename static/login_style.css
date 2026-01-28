@@ -1,0 +1,139 @@
+/* ===============================
+   GLOBAL FORM STYLES
+=============================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #28313B, #485461);
+  color: #222;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ===============================
+   HERO SECTION
+=============================== */
+.hero {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 16px;
+}
+
+/* ===============================
+   FORM CONTAINER
+=============================== */
+.form-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form label {
+  font-weight: 600;
+  text-align: left;
+}
+
+.login-form input {
+  padding: 12px 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #00796b;
+  box-shadow: 0 0 5px rgba(0,121,107,0.5);
+}
+
+/* ===============================
+   BUTTON
+=============================== */
+.login-form .btn-register {
+  background-color: #00796b;
+  color: #fff;
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form .btn-register:hover {
+  background-color: #004d40;
+}
+
+/* ===============================
+   FLASH MESSAGES
+=============================== */
+.flash-message {
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.flash-message.error {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.flash-message.success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+/* ===============================
+   LINK STYLING
+=============================== */
+.form-container a {
+  color: #00796b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-container a:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+@media screen and (max-width: 480px) {
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .login-form .btn-register {
+    font-size: 16px;
+    padding: 10px;
+  }
+}

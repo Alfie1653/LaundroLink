@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Request Laundry</title>
+</head>
+<body>
+
+<h2>Request Laundry – {{ provider.name }}</h2>
+
+<p>Phone: {{ provider.phone }}</p>
+
+<form>
+  <input placeholder="Your Name"><br>
+  <input placeholder="Pickup Location"><br>
+  <input placeholder="Estimated KGs"><br>
+  <textarea placeholder="Notes"></textarea><br>
+  <button onclick="alert('Request sent to {{ provider.phone }}')">
+    Send Request
+  </button>
+</form>
+
+</body>
+</html>

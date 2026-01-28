@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register Laundry Service</title>
+  <link rel="stylesheet" href="/static/register.css">
+  <style>
+    /* Flash message style */
+    .flash-message {
+      padding: 12px 18px;
+      margin: 15px auto;
+      border-radius: 6px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      font-weight: bold;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+    .flash-message.success {
+      background-color: #00796b;
+      color: #fff;
+    }
+    .flash-message.error {
+      background-color: #c62828;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO SECTION -->
+  <div class="hero">
+    <h1>Register Laundry Service</h1>
+  </div>
+
+  <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+        <script>
+          // Automatically fade out all flash messages after 5s
+          setTimeout(() => {
+            const flashes = document.querySelectorAll('.flash-message');
+            flashes.forEach(flash => {
+              flash.style.transition = "opacity 1s ease";
+              flash.style.opacity = 0;
+            });
+          }, 5000);
+
+          // If it's a success (like registration), redirect 1s after fade
+          setTimeout(() => {
+            const flashes = document.querySelectorAll('.flash-message.success');
+            if (flashes.length) {
+              window.location.href = "{{ url_for('index') }}";
+            }
+          }, 6000);
+        </script>
+      {% endif %}
+    {% endwith %}
+
+  <!-- FORM CONTAINER -->
+  <div class="container-box">
+    <form method="POST" enctype="multipart/form-data" class="form-grid">
+
+      <!-- Left Column -->
+      <div class="form-left">
+        <label for="name">Business Name</label>
+        <input id="name" name="name" type="text" required>
+
+        <label for="area">Area / Hostel</label>
+        <input id="area" name="area" type="text" required>
+
+        <label for="price">Price per KG</label>
+        <input id="price" name="price" type="text" required>
+
+        <label for="delivery">Delivery Fee (0 if free)</label>
+        <input id="delivery" name="delivery" type="text" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required>
+      </div>
+
+      <!-- Right Column -->
+      <div class="form-right">
+        <label for="services">Services Offered</label>
+        <input id="services" name="services" type="text" required>
+
+        <label for="phone">Phone Number</label>
+        <div class="phone-group">
+          <select id="country_code" name="country_code" required>
+            <option value="+254" selected>+254 (KE)</option>
+            <option value="+1">+1 (USA)</option>
+            <option value="+44">+44 (UK)</option>
+            <option value="+256">+256 (UG)</option>
+            <option value="+255">+255 (TZ)</option>
+          </select>
+
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputmode="numeric"
+            pattern="[0-9]{9}"
+            maxlength="9"
+            placeholder="712345678"
+            required
+          >
+        </div>
+
+        <label for="profile_pic">Profile Picture</label>
+        <div class="upload-box" id="upload-box">
+            <p>Click or drag image here</p>
+            <input id="profile_pic" name="profile_pic" type="file" accept="image/*">
+        </div>
+
+        <label for="description">Laundry Description (Optional)</label>
+        <textarea id="description" name="description" rows="4" placeholder="Optional: Describe your laundry services"></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn">Register Service</button>
+
+    </form>
+  </div>
+
+  <script>
+    // ========================
+    // FILE UPLOAD DRAG & DROP
+    // ========================
+    const uploadBox = document.getElementById('upload-box');
+    const fileInput = document.getElementById('profile_pic');
+
+    uploadBox.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadBox.style.backgroundColor = 'rgba(0, 121, 107, 0.1)';
+    });
+
+    uploadBox.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      uploadBox.style.backgroundColor = '';
+    });
+
+    uploadBox.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        uploadBox.querySelector('p').textContent = files[0].name;
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        uploadBox.querySelector('p').textContent = fileInput.files[0].name;
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Campus Laundry Services</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- HERO SECTION -->
+  <div class="hero">
+    <h1>Campus Laundry Services</h1>
+    <div class="hero-buttons">
+      <a href="/register">
+        <button class="btn-register">Register Laundry Service</button>
+      </a>
+      <a href="/login">
+        <button class="btn-register btn-login">Owner Login</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- CARDS CONTAINER -->
+  <div class="cards-container">
+    {% for p in providers %}
+    <a href="/service/{{ p.id }}" class="card-link">
+      <div class="card">
+        <!-- Profile Image -->
+        <div class="card-image-wrapper">
+          <img src="{{ url_for('static', filename='uploads/' + p.profile_pic) }}" alt="{{ p.name }}">
+          
+        </div>
+
+        <!-- Card Info -->
+        <div class="card-info">
+          <h3>{{ p.name }}</h3>
+          <p class="price">KES {{ p.price_per_kg }} / kg</p>
+          {% if p.rating %}
+          <p class="rating">⭐ {{ p.rating }}/5</p>
+          {% endif %}
+        </div>
+
+        <!-- Hidden Request Button (appears on hover) -->
+        <div class="card-action">
+          <a
+            href="{{ url_for('request_service', provider_id=p.id) }}"
+            target="_blank"
+            class="btn"
+          >
+            Request Service
+          </a>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

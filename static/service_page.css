@@ -1,0 +1,222 @@
+/* ===============================
+   GLOBAL
+=============================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #28313B, #485461);
+  color: #222;
+  padding: 20px 0;
+  overflow-x: hidden;
+}
+
+/* ===============================
+   PAGE WRAPPER
+=============================== */
+.page-wrapper {
+  max-width: 1100px; /* keep page content centered and not full width */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ===============================
+   HERO / SERVICE TITLE
+=============================== */
+.service-hero {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.service-hero h1 {
+  color: #fff;
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.service-hero .area {
+  color: #ddd;
+  font-size: 18px;
+}
+
+/* ===============================
+   SERVICE MAIN CONTAINER
+=============================== */
+.service-container {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+/* LEFT: SERVICE IMAGE */
+.service-image {
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.service-image img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* RIGHT: INFO PANEL */
+.service-info {
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
+}
+
+.service-info h2 {
+  font-size: 20px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.service-info p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+/* ===============================
+   REQUEST SERVICE BUTTON
+=============================== */
+.service-action {
+  margin-top: 20px;
+  opacity: 0;              /* start hidden */
+  transform: translateY(-10px);
+  animation: fadeInDown 0.6s ease forwards 0.3s; /* fade in after delay */
+}
+
+.service-action .btn-request {
+  background-color: #00796b; /* green */
+  color: #fff;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.service-action .btn-request:hover {
+  background-color: #004d40;
+}
+
+/* ===============================
+   DESCRIPTION & FEEDBACK SECTIONS
+=============================== */
+.sections-container {
+  display: flex;
+  gap: 30px;
+  margin-top: 40px;          /* space above sections */
+  flex-wrap: wrap;
+}
+
+/* Shared section styling */
+.section {
+  flex: 1;
+  min-width: 280px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+/* Section headings */
+.section h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* Section text */
+.section p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* ===============================
+   CUSTOMER FEEDBACK ITEMS
+=============================== */
+.feedback-item {
+  background: #f5f7f8;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.feedback-item strong {
+  color: #00796b;
+}
+
+/* ===============================
+   RESPONSIVE ADJUSTMENTS
+=============================== */
+@media screen and (max-width: 768px) {
+  .sections-container {
+    flex-direction: column;
+  }
+}
+
+
+/* ===============================
+   ANIMATION
+=============================== */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+@media screen and (max-width: 768px) {
+  .service-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .service-info {
+    max-width: 100%;
+  }
+
+  .service-image img {
+    max-width: 90%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .service-hero h1 {
+    font-size: 28px;
+  }
+
+  .service-info h2 {
+    font-size: 18px;
+  }
+
+  .service-info p {
+    font-size: 15px;
+  }
+
+  .service-action .btn-request {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}

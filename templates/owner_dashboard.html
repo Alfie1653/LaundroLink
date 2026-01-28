@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Owner Dashboard</title>
+  <link rel="stylesheet" href="/static/owner_dashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <h2>Owner Dashboard</h2>
+
+    <!-- Update Details Form -->
+    <form method="POST" enctype="multipart/form-data"
+          action="{{ url_for('owner_dashboard', provider_id=provider['id']) }}">
+
+      <!-- TWO COLUMN GRID -->
+      <div class="form-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="form-left">
+          <label for="name">Business Name</label>
+          <input id="name" name="name" type="text" value="{{ provider['name'] }}" required>
+
+          <label for="area">Area / Hostel</label>
+          <input id="area" name="area" type="text" value="{{ provider['area'] }}" required>
+
+          <label for="price">Price per KG</label>
+          <input id="price" name="price" type="text" value="{{ provider['price_per_kg'] }}" required>
+
+          <label for="delivery">Delivery Fee</label>
+          <input id="delivery" name="delivery" type="text" value="{{ provider['delivery_fee'] }}" required>
+
+          <label for="services">Services Offered</label>
+          <input id="services" name="services" type="text" value="{{ provider['services'] }}" required>
+
+          <label for="description">Laundry Description</label>
+          <textarea id="description" name="description" rows="4">{{ provider['description'] }}</textarea>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="form-right">
+          <label for="phone">Phone Number</label>
+          <div class="phone-group">
+            <select id="country_code" name="country_code" required>
+              <option value="+254" {% if provider['country_code']=='+254' %}selected{% endif %}>+254 (Kenya)</option>
+              <option value="+1" {% if provider['country_code']=='+1' %}selected{% endif %}>+1 (USA)</option>
+              <option value="+44" {% if provider['country_code']=='+44' %}selected{% endif %}>+44 (UK)</option>
+              <option value="+256" {% if provider['country_code']=='+256' %}selected{% endif %}>+256 (Uganda)</option>
+              <option value="+255" {% if provider['country_code']=='+255' %}selected{% endif %}>+255 (Tanzania)</option>
+            </select>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputmode="numeric"
+              pattern="[0-9]{9}"
+              maxlength="9"
+              value="{{ provider['phone'] }}"
+              required
+            >
+          </div>
+
+          <label for="profile_pic">Profile Picture</label>
+          <div class="upload-box" id="upload-box">
+            <img
+              src="{{ url_for('static', filename='uploads/' + provider['profile_pic']) }}"
+              alt="Profile Picture"
+              class="profile-preview"
+            >
+            <p>Click or drag image here</p>
+            <input id="profile_pic" name="profile_pic" type="file" accept="image/*">
+          </div>
+
+          <label for="password">Password (leave blank to keep current)</label>
+          <input id="password" name="password" type="password" placeholder="••••••••">
+
+          <!-- UPDATE BUTTON INSIDE RIGHT COLUMN -->
+          <div class="right-column-actions">
+            <button type="submit" class="btn-update">Update Details</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- Ratings Section -->
+    <div class="ratings-section">
+      <h3>Customer Ratings & Reviews</h3>
+      {% if feedbacks %}
+        {% for f in feedbacks %}
+          <div class="rating-card">
+            <p><strong>{{ f['customer_name'] }}</strong> rated ⭐ {{ f['rating'] }}/5</p>
+            <p>{{ f['comment'] }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No reviews yet.</p>
+      {% endif %}
+    </div>
+
+    <p style="text-align:center; margin-top:20px;">
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </p>
+
+  </div>
+
+  <script>
+    const uploadBox = document.getElementById('upload-box');
+    const fileInput = document.getElementById('profile_pic');
+    const previewImg = uploadBox.querySelector('.profile-preview');
+
+    uploadBox.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadBox.style.backgroundColor = 'rgba(0, 121, 107, 0.1)';
+    });
+
+    uploadBox.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      uploadBox.style.backgroundColor = '';
+    });
+
+    uploadBox.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        uploadBox.querySelector('p').textContent = files[0].name;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          previewImg.src = event.target.result;
+        };
+        reader.readAsDataURL(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        uploadBox.querySelector('p').textContent = fileInput.files[0].name;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          previewImg.src = event.target.result;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    });
+  </script>
+
+</body>
+</html>
