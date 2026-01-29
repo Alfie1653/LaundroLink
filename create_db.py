@@ -3,7 +3,7 @@ import psycopg2.extras
 import os
 from datetime import datetime
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgres://user:pass@localhost:5432/laundry_service_db")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 def get_conn():
     return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
