@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime, timedelta
 import urllib
 from flask_wtf.csrf import CSRFProtect
+from create_db import migrate
 csrf = CSRFProtect()
 
 

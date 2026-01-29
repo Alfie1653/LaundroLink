@@ -2,7 +2,10 @@ import psycopg2
 import psycopg2.extras
 import os
 from datetime import datetime
+from dotenv import load_dotenv
 
+load_dotenv()
+DATABASE_URL = os.environ.get("DATABASE_URL")
 # =========================
 # ENVIRONMENT CHECK
 # =========================
