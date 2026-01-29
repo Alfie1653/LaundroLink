@@ -79,6 +79,14 @@ def query_all(sql, params=()):
     conn.close()
     return result
 
+def execute(sql, params=()):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(sql, params)
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -129,7 +137,7 @@ def register():
             filename = "profile_placeholder.png"
 
         # Insert provider
-        query_one("""
+        execute("""
             INSERT INTO providers
             (name, country_code, area, price_per_kg, delivery_fee, services,
              phone, password, profile_pic, description)
