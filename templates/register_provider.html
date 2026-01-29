@@ -63,7 +63,7 @@
   <!-- FORM CONTAINER -->
   <div class="container-box">
     <form method="POST" enctype="multipart/form-data" class="form-grid">
-      {{ csrf_token()  }}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token()  }}">
       <!-- Left Column -->
       <div class="form-left">
         <label for="name">Business Name</label>
