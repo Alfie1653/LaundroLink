@@ -100,8 +100,8 @@ def register():
         name = request.form["name"]
         country_code = request.form.get("country_code", "+254")
         area = request.form["area"]
-        price = request.form["price"]
-        delivery = request.form["delivery"]
+        price = float(request.form["price"])
+        delivery = float(request.form["delivery"])
         services = request.form["services"]
         phone = request.form["phone"]
         password = request.form["password"]
