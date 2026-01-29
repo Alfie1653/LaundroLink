@@ -19,6 +19,7 @@ migrate()
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_secret")
 
+csrf.init_app(app)
 # =========================
 # REVIEW TOKENS
 # =========================
