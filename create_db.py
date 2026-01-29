@@ -3,10 +3,22 @@ import psycopg2.extras
 import os
 from datetime import datetime
 
+# =========================
+# ENVIRONMENT CHECK
+# =========================
 DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL environment variable not set!")
 
+# =========================
+# DATABASE CONNECTION
+# =========================
 def get_conn():
-    return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
+    try:
+        return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
+    except Exception as e:
+        print("Failed to connect to PostgreSQL:", e)
+        raise
 
 def table_exists(cursor, table):
     cursor.execute("""
@@ -17,6 +29,9 @@ def table_exists(cursor, table):
     """, (table,))
     return cursor.fetchone()[0]
 
+# =========================
+# MIGRATION
+# =========================
 def migrate():
     conn = get_conn()
     cur = conn.cursor()
@@ -26,7 +41,7 @@ def migrate():
     # =========================
     if not table_exists(cur, "providers"):
         cur.execute("""
-        CREATE TABLE providers (
+        CREATE TABLE IF NOT EXISTS providers (
             id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             country_code VARCHAR(10) NOT NULL DEFAULT '+254',
@@ -47,7 +62,7 @@ def migrate():
     # =========================
     if not table_exists(cur, "ratings"):
         cur.execute("""
-        CREATE TABLE ratings (
+        CREATE TABLE IF NOT EXISTS ratings (
             id SERIAL PRIMARY KEY,
             provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
             customer_name TEXT DEFAULT 'Anonymous',
@@ -62,7 +77,7 @@ def migrate():
     # =========================
     if not table_exists(cur, "review_tokens"):
         cur.execute("""
-        CREATE TABLE review_tokens (
+        CREATE TABLE IF NOT EXISTS review_tokens (
             id SERIAL PRIMARY KEY,
             provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
             token UUID UNIQUE NOT NULL,
@@ -76,7 +91,7 @@ def migrate():
     # =========================
     if not table_exists(cur, "password_resets"):
         cur.execute("""
-        CREATE TABLE password_resets (
+        CREATE TABLE IF NOT EXISTS password_resets (
             id SERIAL PRIMARY KEY,
             provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
             token_hash TEXT NOT NULL,
@@ -90,5 +105,8 @@ def migrate():
     conn.close()
     print("PostgreSQL database migrated successfully!")
 
+# =========================
+# RUN MIGRATION
+# =========================
 if __name__ == "__main__":
     migrate()
