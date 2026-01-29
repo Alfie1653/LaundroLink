@@ -1,103 +1,94 @@
-import sqlite3
+import psycopg2
+import psycopg2.extras
+import os
+from datetime import datetime
 
-DB_NAME = "laundry.db"
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgres://user:pass@localhost:5432/laundry_service_db")
+
+def get_conn():
+    return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
 
 def table_exists(cursor, table):
     cursor.execute("""
-        SELECT name FROM sqlite_master
-        WHERE type='table' AND name=?
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables
+            WHERE table_name = %s
+        )
     """, (table,))
-    return cursor.fetchone() is not None
-
-def column_exists(cursor, table, column):
-    cursor.execute(f"PRAGMA table_info({table})")
-    return column in [row[1] for row in cursor.fetchall()]
+    return cursor.fetchone()[0]
 
 def migrate():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
+    conn = get_conn()
+    cur = conn.cursor()
 
     # =========================
     # PROVIDERS
     # =========================
-    if not table_exists(cursor, "providers"):
-        cursor.execute("""
+    if not table_exists(cur, "providers"):
+        cur.execute("""
         CREATE TABLE providers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
-            country_code TEXT NOT NULL DEFAULT '+254',
+            country_code VARCHAR(10) NOT NULL DEFAULT '+254',
             area TEXT NOT NULL,
-            price_per_kg REAL NOT NULL DEFAULT 0,
-            delivery_fee REAL NOT NULL DEFAULT 0,
+            price_per_kg NUMERIC(10,2) NOT NULL DEFAULT 0,
+            delivery_fee NUMERIC(10,2) NOT NULL DEFAULT 0,
             services TEXT NOT NULL,
-            phone TEXT UNIQUE NOT NULL,
+            phone VARCHAR(20) UNIQUE NOT NULL,
             password TEXT NOT NULL,
             description TEXT,
             profile_pic TEXT DEFAULT 'profile_placeholder.png',
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
-    else:
-        if not column_exists(cursor, "providers", "country_code"):
-            cursor.execute("ALTER TABLE providers ADD COLUMN country_code TEXT DEFAULT '+254'")
-        if not column_exists(cursor, "providers", "price_per_kg"):
-            cursor.execute("ALTER TABLE providers ADD COLUMN price_per_kg REAL DEFAULT 0")
-        if not column_exists(cursor, "providers", "delivery_fee"):
-            cursor.execute("ALTER TABLE providers ADD COLUMN delivery_fee REAL DEFAULT 0")
-        if not column_exists(cursor, "providers", "description"):
-            cursor.execute("ALTER TABLE providers ADD COLUMN description TEXT")
-        if not column_exists(cursor, "providers", "profile_pic"):
-            cursor.execute("ALTER TABLE providers ADD COLUMN profile_pic TEXT")
 
     # =========================
     # RATINGS (REVIEWS)
     # =========================
-    if not table_exists(cursor, "ratings"):
-        cursor.execute("""
+    if not table_exists(cur, "ratings"):
+        cur.execute("""
         CREATE TABLE ratings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            provider_id INTEGER NOT NULL,
-            customer_name TEXT,
+            id SERIAL PRIMARY KEY,
+            provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+            customer_name TEXT DEFAULT 'Anonymous',
             rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
             comment TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (provider_id) REFERENCES providers(id)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
 
     # =========================
     # REVIEW TOKENS
     # =========================
-    if not table_exists(cursor, "review_tokens"):
-        cursor.execute("""
+    if not table_exists(cur, "review_tokens"):
+        cur.execute("""
         CREATE TABLE review_tokens (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            provider_id INTEGER NOT NULL,
-            token TEXT UNIQUE NOT NULL,
-            expires_at DATETIME NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (provider_id) REFERENCES providers(id)
+            id SERIAL PRIMARY KEY,
+            provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+            token UUID UNIQUE NOT NULL,
+            expires_at TIMESTAMP NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
 
     # =========================
     # PASSWORD RESETS
     # =========================
-    if not table_exists(cursor, "password_resets"):
-        cursor.execute("""
+    if not table_exists(cur, "password_resets"):
+        cur.execute("""
         CREATE TABLE password_resets (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            provider_id INTEGER NOT NULL,
+            id SERIAL PRIMARY KEY,
+            provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
             token_hash TEXT NOT NULL,
-            expires_at DATETIME NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (provider_id) REFERENCES providers(id)
+            expires_at TIMESTAMP NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
 
     conn.commit()
+    cur.close()
     conn.close()
-    print("Database migrated successfully")
+    print("PostgreSQL database migrated successfully!")
 
 if __name__ == "__main__":
     migrate()
