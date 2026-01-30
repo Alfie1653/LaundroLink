@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Reviews - {{ provider.name }}</title>
+  <link rel="stylesheet" href="/static/all_reviews.css">
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <!-- PAGE HERO -->
+    <div class="service-hero">
+      <h1>All Reviews for {{ provider.name }}</h1>
+    </div>
+
+    <div class="sections-container">
+      <!-- Customer Reviews Section -->
+      <div class="section feedback-section">
+        {% if feedbacks %}
+          {% for review in feedbacks %}
+            <div class="feedback-item">
+              <p><strong>{{ review.customer_name }}:</strong></p>
+              <p class="rating-stars">
+                {% for i in range(review.rating) %}★{% endfor %}
+                {% for i in range(5 - review.rating) %}☆{% endfor %}
+              </p>
+              <p>{{ review.comment }}</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No reviews yet.</p>
+        {% endif %}
+
+        <!-- Back button -->
+        <a href="{{ url_for('service_page', provider_id=provider.id) }}" class="btn-back">
+          ← Back to Service Page
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

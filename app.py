@@ -101,16 +101,49 @@ def allowed_file(filename):
 # ROUTES
 # =========================
 
-# Home page
-@app.route("/")
-def index():
-    res = supabase.table("providers").select("*").execute()
-    providers = res.data
-    
-    return render_template("index.html", providers=providers)
+# -------------------------
+# HOME PAGE
+# -------------------------
+@app.route("/", methods=["GET"])
+def home():
+    sort_by = request.args.get("sort", "date")  # default is date
 
+    # Fetch all providers
+    res_providers = supabase.table("providers").select("*").execute()
+    providers = res_providers.data
 
-#Register
+    # Fetch all ratings once (so we can always calculate avg_rating and num_reviews)
+    res_ratings = supabase.table("ratings").select("*").execute()
+    ratings = res_ratings.data
+
+    # Map provider_id -> list of ratings
+    ratings_map = {}
+    for r in ratings:
+        ratings_map.setdefault(r['provider_id'], []).append(r['rating'])
+
+    # Compute avg_rating and number of reviews for each provider
+    for p in providers:
+        p_ratings = ratings_map.get(p['id'], [])
+        if p_ratings:
+            p['avg_rating'] = round(sum(p_ratings) / len(p_ratings), 1)
+            p['num_reviews'] = len(p_ratings)
+        else:
+            p['avg_rating'] = 0
+            p['num_reviews'] = 0
+
+    # Sorting
+    if sort_by == "rating":
+        providers_sorted = sorted(providers, key=lambda x: x['avg_rating'], reverse=True)
+    elif sort_by == "alphabetical":
+        providers_sorted = sorted(providers, key=lambda x: x['name'].lower())
+    else:  # default "date"
+        providers_sorted = sorted(providers, key=lambda x: x['created_at'], reverse=True)
+
+    return render_template("index.html", providers=providers_sorted, sort_by=sort_by)
+
+# -------------------------
+# REGISTER
+# -------------------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -160,14 +193,19 @@ def register():
 
         res = supabase.table("providers").insert(data).execute()
 
-        flash("Laundry service registered successfully!", "success")
-        return redirect(url_for("register", success=1))
+        provider = res.data[0]
+        provider_id = provider["id"]
 
-    redirect_to_index = request.args.get("success") == "1"
-    return render_template(
-        "register_provider.html",
-        redirect_to_index=redirect_to_index
-    )
+        session["provider_id"] = provider_id
+        session["provider_name"] = provider["name"]
+
+        return render_template(
+            "register_provider.html",
+            show_success=True,
+            redirect_url=url_for("owner_dashboard", provider_id=provider_id)
+        )
+
+    return render_template("register_provider.html", show_success=False)
 
 
 # -------------------------
@@ -274,7 +312,7 @@ def service_page(provider_id):
     res = supabase.table("providers").select("*").eq("id", provider_id).execute()
     provider = res.data[0] if res.data else None
 
-    res = supabase.table("ratings").select("*").eq("provider_id", provider_id).order("created_at", desc=True).execute()
+    res = supabase.table("ratings").select("*").eq("provider_id", provider_id).order("created_at", desc=True).limit(1).execute()
     feedbacks = res.data
 
     if not provider:
@@ -303,6 +341,35 @@ def service_page(provider_id):
 
 
 # -------------------------
+# ALL CUSTOMER REVIEWS
+# -------------------------
+@app.route("/reviews/<int:provider_id>")
+def all_reviews(provider_id):
+    # Fetch all reviews
+    res = (
+        supabase.table("ratings")
+        .select("*")
+        .eq("provider_id", provider_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
+    feedbacks = res.data
+
+    # Fetch provider info
+    res2 = supabase.table("providers").select("*").eq("id", provider_id).execute()
+    provider = res2.data[0] if res2.data else None
+
+    if not provider:
+        return "Provider not found", 404
+
+    return render_template(
+        "all_reviews.html",
+        provider=provider,
+        feedbacks=feedbacks
+    )
+
+
+# -------------------------
 # REQUEST SERVICE (WHATSAPP)
 # -------------------------
 @app.route("/request_service/<int:provider_id>")
@@ -322,8 +389,11 @@ def request_service(provider_id):
     review_link = url_for("leave_review", token=token, _external=True)
 
     message = (
-        f"Hello {provider['name']}, I would like to request laundry service.\n\n"
-        f"After the service, please leave a review here:\n{review_link}"
+        f"Hi {provider['name']}! \n"
+        f"I found your service on Campus Laundry and would like to request laundry service.\n\n"
+        f"Could you please let me know your availability and pickup details? Thanks!"
+
+        f"After the service, I will leave you a review:\n{review_link}"
     )
 
     encoded_message = urllib.parse.quote(message)

@@ -24,46 +24,69 @@
       background-color: #c62828;
       color: #fff;
     }
+
+    /* ===== NEW: BLUR + OVERLAY ===== */
+    .blurred {
+      filter: blur(6px);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      text-align: center;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .success-overlay h1 {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    .success-overlay p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
 
   <!-- HERO SECTION -->
-  <div class="hero">
+  <div class="hero {% if show_success %}blurred{% endif %}">
     <h1>Register Laundry Service</h1>
   </div>
 
-  <!-- FLASH MESSAGES -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash-message {{ category }}">{{ message }}</div>
-        {% endfor %}
-        <script>
-          // Automatically fade out all flash messages after 5s
-          setTimeout(() => {
-            const flashes = document.querySelectorAll('.flash-message');
-            flashes.forEach(flash => {
-              flash.style.transition = "opacity 1s ease";
-              flash.style.opacity = 0;
-            });
-          }, 5000);
-
-          // If it's a success (like registration), redirect 1s after fade
-          setTimeout(() => {
-            const flashes = document.querySelectorAll('.flash-message.success');
-            if (flashes.length) {
-              window.location.href = "{{ url_for('index') }}";
-            }
-          }, 6000);
-        </script>
-      {% endif %}
-    {% endwith %}
+  <!-- FLASH MESSAGES (unchanged, still used for errors) -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
+      <script>
+        setTimeout(() => {
+          const flashes = document.querySelectorAll('.flash-message');
+          flashes.forEach(flash => {
+            flash.style.opacity = 0;
+          });
+        }, 5000);
+      </script>
+    {% endif %}
+  {% endwith %}
 
   <!-- FORM CONTAINER -->
-  <div class="container-box">
+  <div class="container-box {% if show_success %}blurred{% endif %}">
     <form method="POST" enctype="multipart/form-data" class="form-grid">
       <input type="hidden" name="csrf_token" value="{{ csrf_token()  }}">
+
       <!-- Left Column -->
       <div class="form-left">
         <label for="name">Business Name</label>
@@ -111,24 +134,35 @@
 
         <label for="profile_pic">Profile Picture</label>
         <div class="upload-box" id="upload-box">
-            <p>Click or drag image here</p>
-            <input id="profile_pic" name="profile_pic" type="file" accept="image/*">
+          <p>Click or drag image here</p>
+          <input id="profile_pic" name="profile_pic" type="file" accept="image/*">
         </div>
 
         <label for="description">Laundry Description (Optional)</label>
-        <textarea id="description" name="description" rows="4" placeholder="Optional: Describe your laundry services"></textarea>
+        <textarea id="description" name="description" rows="4" placeholder="Describe your laundry services"></textarea>
       </div>
 
       <!-- Submit Button -->
       <button type="submit" class="btn">Register Service</button>
-
     </form>
   </div>
 
+  <!-- ===== NEW: SUCCESS OVERLAY ===== -->
+  {% if show_success %}
+  <div class="success-overlay">
+    <h1>Laundry service registered successfully!</h1>
+    <p>You will be redirected to your dashboard shortly.</p>
+  </div>
+
   <script>
-    // ========================
-    // FILE UPLOAD DRAG & DROP
-    // ========================
+    setTimeout(() => {
+      window.location.href = "{{ redirect_url }}";
+    }, 3000);
+  </script>
+  {% endif %}
+
+  <!-- EXISTING FILE UPLOAD SCRIPT (unchanged) -->
+  <script>
     const uploadBox = document.getElementById('upload-box');
     const fileInput = document.getElementById('profile_pic');
 

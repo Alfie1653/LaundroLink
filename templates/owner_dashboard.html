@@ -89,8 +89,17 @@
       {% if feedbacks %}
         {% for f in feedbacks %}
           <div class="rating-card">
-            <p><strong>{{ f['customer_name'] }}</strong> rated ⭐ {{ f['rating'] }}/5</p>
-            <p>{{ f['comment'] }}</p>
+            <p><strong>{{ f['customer_name'] }}</strong></p>
+            <p class="rating-stars">
+              {% for i in range(1, 6) %}
+                {% if f['rating'] >= i %}
+                  <span class="star filled">★</span>
+                {% else %}
+                  <span class="star">☆</span>
+                {% endif %}
+              {% endfor %}
+            </p>
+            <p class="feedback-comment">{{ f['comment'] }}</p>
           </div>
         {% endfor %}
       {% else %}

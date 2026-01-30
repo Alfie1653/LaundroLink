@@ -45,6 +45,34 @@ body {
 }
 
 /* ===============================
+   SORT DROPDOWN
+=============================== */
+.sort-container {
+  width: 1360px;           /* match cards container width */
+  margin: 20px auto;       /* center horizontally like cards-container */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;  /* left-align content */
+}
+
+.sort-container label {
+  font-weight: bold;
+  color: #fff;
+}
+
+.sort-container select {
+  color: #fff;
+  background-color: #00796b;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+/* ===============================
    CARDS CONTAINER (flexbox, 5 cards max per row)
 =============================== */
 .cards-container {
@@ -80,6 +108,37 @@ body {
   transform: translateY(-6px);
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
+
+/* ===============================
+   CARD STAR RATINGS WITH REVIEW COUNT
+=============================== */
+.card-info .rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  color: #00796b;
+}
+
+/* Stars */
+.card-info .stars {
+  font-size: 1.6rem;      /* bigger stars */
+  line-height: 1;
+  color: #00796b;         /* teal */
+}
+
+/* Review count */
+.card-info .num-reviews {
+  font-size: 0.9rem;
+  color: #00796b;
+}
+
+/* No ratings text */
+.card-info .no-rating {
+  font-size: 0.95rem;
+  color: #00796b;
+}
+
 
 /* ===============================
    IMAGE + WISHLIST

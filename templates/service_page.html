@@ -11,6 +11,7 @@
 
     <!-- SERVICE HERO / TITLE -->
     <div class="service-hero">
+      <a href="{{ url_for('home') }}" class="btn-back">Back</a>
       <h1>{{ provider.name }}</h1>
     </div>
 
@@ -85,21 +86,27 @@
         {% if feedbacks %}
           {% for f in feedbacks %}
             <div class="feedback-item">
-              <p><strong>{{ f.customer_name }}:</strong></p>
-              <p class="rating-stars">
-                {% for i in range(f.rating) %}★{% endfor %}
-                {% for i in range(5 - f.rating) %}☆{% endfor %}
+              <p class="feedback-header">
+                <strong>{{ f.customer_name }}</strong>:
+                <span class="rating-stars">
+                  {% for i in range(f.rating) %}★{% endfor %}
+                  {% for i in range(5 - f.rating) %}☆{% endfor %}
+                </span>
               </p>
-              <p>{{ f.comment }}</p>
+              <p class="feedback-comment">{{ f.comment }}</p>
             </div>
           {% endfor %}
+          <!-- See all reviews link -->
+          <div style="margin-top: 10px;">
+            <a href="{{ url_for('all_reviews', provider_id=provider.id) }}" class="btn-see-all">
+              See all reviews
+            </a>
+          </div>
         {% else %}
           <p>No feedback yet.</p>
         {% endif %}
       </div>
-
     </div>
-
   </div>
 </body>
 </html>

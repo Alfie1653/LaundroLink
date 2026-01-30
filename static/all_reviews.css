@@ -1,0 +1,155 @@
+/* ===============================
+   GLOBAL STYLES
+=============================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #28313B, #485461);
+  color: #222;
+  padding: 20px 0;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+/* ===============================
+   PAGE WRAPPER
+=============================== */
+.page-wrapper {
+  max-width: 900px; /* slightly narrower than service page */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ===============================
+   PAGE HERO / TITLE
+=============================== */
+.service-hero {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.service-hero h1 {
+  color: #fff;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+/* ===============================
+   SECTIONS CONTAINER
+=============================== */
+.sections-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* ===============================
+   SECTION STYLING
+=============================== */
+.section {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+/* Section headings */
+.section h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* Section paragraph text */
+.section p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* ===============================
+   CUSTOMER FEEDBACK ITEM
+=============================== */
+.feedback-item {
+  background: #f5f7f8;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+/* Customer name + stars on same line */
+.feedback-header {
+  font-size: 16px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rating-stars {
+  color: #00796b;
+  font-size: 16px;
+}
+
+/* Feedback comment styling */
+.feedback-comment {
+  font-size: 15px;
+  color: #555;
+  margin-left: 8px; /* small indent for clarity */
+}
+
+/* ===============================
+   BACK BUTTON
+=============================== */
+.btn-back {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 6px 12px;
+  background-color: #00796b;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: #004d40;
+}
+
+/* ===============================
+   RESPONSIVE STYLING
+=============================== */
+@media screen and (max-width: 768px) {
+  .sections-container {
+    flex-direction: column;
+  }
+
+  .feedback-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .service-hero h1 {
+    font-size: 28px;
+  }
+
+  .section h2 {
+    font-size: 18px;
+  }
+
+  .feedback-header {
+    font-size: 15px;
+  }
+
+  .feedback-comment {
+    font-size: 14px;
+    margin-left: 0;
+  }
+
+  .btn-back {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}

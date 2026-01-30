@@ -152,27 +152,40 @@ textarea {
 /* =========================
    RATINGS SECTION
    ========================= */
-
 .ratings-section {
-    margin-top: 45px;
-}
-
-.ratings-section h3 {
-    margin-bottom: 15px;
-    color: #00796b;
+  margin-top: 30px;
 }
 
 .rating-card {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 14px;
-    margin-bottom: 14px;
-    background-color: #fafafa;
+  background: #f5f7f8;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
 }
 
 .rating-card p {
-    margin: 6px 0;
+  margin: 6px 0;
 }
+
+.rating-stars {
+  display: flex;
+  gap: 3px;
+  font-size: 16px;
+}
+
+.rating-stars .star {
+  color: #ccc; /* empty star color */
+}
+
+.rating-stars .star.filled {
+  color: #00796b; /* filled star color */
+}
+
+.feedback-comment {
+  margin-top: 4px;
+  color: #555;
+}
+
 
 /* =========================
    LOGOUT LINK

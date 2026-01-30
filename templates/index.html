@@ -19,6 +19,23 @@
     </div>
   </div>
 
+  <!-- SORTING OPTIONS -->
+  <div class="sort-container">
+    <label for="sort">Sort by:</label>
+    <select id="sort" name="sort" onchange="applySort(this)">
+      <option value="date" {% if sort_by == 'date' %}selected{% endif %}>Date Added</option>
+      <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Rating</option>
+      <option value="alphabetical" {% if sort_by == 'alphabetical' %}selected{% endif %}>A-Z</option>
+    </select>
+  </div>
+
+  <script>
+  function applySort(select) {
+    const sort = select.value;
+    window.location.href = `/?sort=${sort}`;
+  }
+  </script>
+
   <!-- CARDS CONTAINER -->
   <div class="cards-container">
     {% for p in providers %}
@@ -34,8 +51,26 @@
         <div class="card-info">
           <h3>{{ p.name }}</h3>
           <p class="price">KES {{ p.price_per_kg }} / kg</p>
-          {% if p.rating %}
-          <p class="rating">⭐ {{ p.rating }}/5</p>
+
+          {% if p.num_reviews > 0 %}
+            <p class="rating">
+              <span class="stars">
+                {% for i in range(1, 6) %}
+                  {% if p.avg_rating >= i %}
+                    ★
+                  {% elif p.avg_rating >= i - 0.5 %}
+                    ☆
+                  {% else %}
+                    ☆
+                  {% endif %}
+                {% endfor %}
+              </span>
+              <span class="num-reviews">
+                ({{ p.num_reviews }} review{{ 's' if p.num_reviews > 1 else '' }})
+              </span>
+            </p>
+          {% else %}
+            <p class="rating no-rating" style="color: #00796b;">No ratings yet</p>
           {% endif %}
         </div>
 
