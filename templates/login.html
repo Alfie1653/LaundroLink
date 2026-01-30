@@ -58,6 +58,7 @@
     {% endwith %}
 
     <form method="POST" action="/login" class="login-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token()  }}">
       <label for="phone">Phone Number</label>
       <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leave a Review</title>
+  <link rel="stylesheet" href="/static/leave_review.css">
+</head>
+<body>
+
+  <!-- REVIEW FORM -->
+  <div class="review-container {% if show_thank_you %}blurred{% endif %}">
+    <h2>Leave a Review</h2>
+
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label for="customer_name">Your Name</label>
+      <input
+        type="text"
+        id="customer_name"
+        name="customer_name"
+        placeholder="Anonymous"
+        required
+      >
+
+      <label>Rating</label>
+      <div class="stars">
+        <input type="radio" name="rating" id="star5" value="5" required>
+        <label for="star5">★</label>
+
+        <input type="radio" name="rating" id="star4" value="4">
+        <label for="star4">★</label>
+
+        <input type="radio" name="rating" id="star3" value="3">
+        <label for="star3">★</label>
+
+        <input type="radio" name="rating" id="star2" value="2">
+        <label for="star2">★</label>
+
+        <input type="radio" name="rating" id="star1" value="1">
+        <label for="star1">★</label>
+      </div>
+
+      <label for="comment">Comment</label>
+      <textarea
+        id="comment"
+        name="comment"
+        rows="4"
+        placeholder="Write your review here..."
+        required
+      ></textarea>
+
+      <button type="submit">Submit Review</button>
+    </form>
+  </div>
+
+  <!-- THANK YOU OVERLAY -->
+  {% if show_thank_you %}
+  <div class="thank-you-overlay">
+    <h1>Thank you for your review!</h1>
+    <p>You will be redirected in a few seconds.</p>
+    <a href="{{ redirect_url }}">Click here if not redirected</a>
+  </div>
+
+  <script>
+    setTimeout(function () {
+      window.open = "{{ redirect_url }}";
+      window.close();
+    }, 3000);
+  </script>
+  {% endif %}
+
+</body>
+</html>

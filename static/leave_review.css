@@ -1,0 +1,191 @@
+/* ===============================
+   RESET & BASE
+=============================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #28313B, #485461);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ===============================
+   REVIEW CARD
+=============================== */
+.review-container {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.16);
+  padding: 30px;
+  position: relative;
+  transition: filter 0.4s ease, opacity 0.4s ease;
+}
+
+/* Blur state after submit */
+.review-container.blurred {
+  filter: blur(6px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ===============================
+   TITLE
+=============================== */
+.review-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #2f2f2f;
+  font-size: 26px;
+}
+
+/* ===============================
+   FORM ELEMENTS
+=============================== */
+.review-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #444;
+}
+
+.review-container input[type="text"],
+.review-container textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.review-container input[type="text"]:focus,
+.review-container textarea:focus {
+  outline: none;
+  border-color: #00796b;
+  box-shadow: 0 0 0 2px rgba(0, 121, 107, 0.15);
+}
+
+.review-container textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* ===============================
+   STAR RATING
+=============================== */
+.stars {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+
+.stars input {
+  display: none;
+}
+
+.stars label {
+  font-size: 30px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.stars label:hover,
+.stars label:hover ~ label {
+  color: #ff9800;
+  transform: scale(1.15);
+}
+
+.stars input:checked ~ label {
+  color: #ff9800;
+}
+
+/* ===============================
+   SUBMIT BUTTON
+=============================== */
+.review-container button {
+  width: 100%;
+  background-color: #00796b;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.review-container button:hover {
+  background-color: #004d40;
+  transform: translateY(-2px);
+}
+
+/* ===============================
+   THANK YOU OVERLAY
+=============================== */
+.thank-you-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  text-align: center;
+  padding: 20px;
+}
+
+.thank-you-overlay h1 {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.thank-you-overlay p {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: #e0e0e0;
+}
+
+.thank-you-overlay a {
+  font-size: 1rem;
+  color: #ffcc80;
+  text-decoration: underline;
+}
+
+.thank-you-overlay a:hover {
+  color: #ffffff;
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+@media (max-width: 480px) {
+  .review-container {
+    padding: 22px 20px;
+  }
+
+  .review-container h2 {
+    font-size: 22px;
+  }
+
+  .thank-you-overlay h1 {
+    font-size: 2.2rem;
+  }
+}

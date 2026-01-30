@@ -10,10 +10,16 @@ from datetime import datetime, timedelta
 import urllib
 from flask_wtf.csrf import CSRFProtect
 from create_db import migrate
+
+from supabase_client import supabase
+from dotenv import load_dotenv
+
+
+load_dotenv()
 csrf = CSRFProtect()
 
 #Run migrations on startup
-migrate()
+#migrate()
 
 
 app = Flask(__name__)
@@ -26,13 +32,14 @@ csrf.init_app(app)
 
 def generate_review_token(provider_id):
     token = str(uuid.uuid4())
-    expires_at = datetime.utcnow() + timedelta(days=2)  # link valid for 48 hours
+    expires_at = (datetime.utcnow() + timedelta(days=2)).isoformat()  # link valid for 48 hours
 
 
-    query_one("""
-        INSERT INTO review_tokens (provider_id, token, expires_at)
-        VALUES (%s, %s, %s)
-    """, (provider_id, token, expires_at))
+    supabase.table("review_tokens").insert({
+        "provider_id": provider_id,
+        "token": token,
+        "expires_at": expires_at
+    }).execute()
 
 
     return token
@@ -97,7 +104,9 @@ def allowed_file(filename):
 # Home page
 @app.route("/")
 def index():
-    providers = query_all("SELECT * FROM providers")
+    res = supabase.table("providers").select("*").execute()
+    providers = res.data
+    
     return render_template("index.html", providers=providers)
 
 
@@ -116,10 +125,9 @@ def register():
         description = request.form.get("description", "")
 
         # Check if phone already exists
-        existing = query_one(
-            "SELECT * FROM providers WHERE phone = %s",
-            (phone,)
-        )
+        res = supabase.table("providers").select("*").eq("phone", phone).execute()
+        existing = res.data
+
         if existing:
             flash("This phone number is already registered.", "error")
             return redirect("/register")
@@ -137,15 +145,20 @@ def register():
             filename = "profile_placeholder.png"
 
         # Insert provider
-        execute("""
-            INSERT INTO providers
-            (name, country_code, area, price_per_kg, delivery_fee, services,
-             phone, password, profile_pic, description)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            name, country_code, area, price, delivery,
-            services, phone, password_hash, filename, description
-        ))
+        data = {
+            "name": name,
+            "country_code": country_code,
+            "area": area,
+            "price_per_kg": price,
+            "delivery_fee": delivery,
+            "services": services,
+            "phone": phone,
+            "password": password_hash,
+            "description": description,
+            "profile_pic": filename
+        }
+
+        res = supabase.table("providers").insert(data).execute()
 
         flash("Laundry service registered successfully!", "success")
         return redirect(url_for("register", success=1))
@@ -166,10 +179,8 @@ def login():
         phone = request.form["phone"]
         password = request.form["password"]
 
-        provider = query_one(
-            "SELECT * FROM providers WHERE phone = %s",
-            (phone,)
-        )
+        res = supabase.table("providers").select("*").eq("phone", phone).execute()
+        provider = res.data[0] if res.data else None
 
         if provider and check_password_hash(provider["password"], password):
             session["provider_id"] = provider["id"]
@@ -196,15 +207,11 @@ def owner_dashboard(provider_id):
         flash("Unauthorized access.", "error")
         return redirect("/login")
 
-    provider = query_one(
-        "SELECT * FROM providers WHERE id = %s",
-        (provider_id,)
-    )
+    res = supabase.table("providers").select("*").eq("id", provider_id).execute()
+    provider = res.data[0] if res.data else None
 
-    feedbacks = query_all(
-        "SELECT * FROM ratings WHERE provider_id = %s ORDER BY created_at DESC",
-        (provider_id,)
-    )
+    res = supabase.table("ratings").select("*").eq("provider_id", provider_id).order("created_at", desc=True).execute()
+    feedbacks = res.data
 
     if not provider:
         return "Provider not found", 404
@@ -234,24 +241,19 @@ def owner_dashboard(provider_id):
         else:
             unique_filename = provider["profile_pic"]
 
-        query_one("""
-            UPDATE providers
-            SET name=%s,
-                area=%s,
-                price_per_kg=%s,
-                delivery_fee=%s,
-                services=%s,
-                phone=%s,
-                country_code=%s,
-                description=%s,
-                profile_pic=%s,
-                password=%s
-            WHERE id=%s
-        """, (
-            name, area, price, delivery, services, phone,
-            country_code, description, unique_filename,
-            password_hash, provider_id
-        ))
+        supabase.table("providers").update({
+            "name": name,
+            "area": area,
+            "price_per_kg": price,
+            "delivery_fee": delivery,
+            "services": services,
+            "phone": phone,
+            "country_code": country_code,
+            "description": description,
+            "profile_pic": unique_filename,
+            "password": password_hash
+        }).eq("id", provider_id).execute()
+    
 
         flash("Details updated successfully!", "success")
         return redirect(url_for("owner_dashboard", provider_id=provider_id))
@@ -269,15 +271,11 @@ def owner_dashboard(provider_id):
 @app.route("/service/<int:provider_id>", methods=["GET", "POST"])
 def service_page(provider_id):
 
-    provider = query_one(
-        "SELECT * FROM providers WHERE id = %s",
-        (provider_id,)
-    )
+    res = supabase.table("providers").select("*").eq("id", provider_id).execute()
+    provider = res.data[0] if res.data else None
 
-    feedbacks = query_all(
-        "SELECT * FROM ratings WHERE provider_id = %s ORDER BY created_at DESC",
-        (provider_id,)
-    )
+    res = supabase.table("ratings").select("*").eq("provider_id", provider_id).order("created_at", desc=True).execute()
+    feedbacks = res.data
 
     if not provider:
         return "Provider not found", 404
@@ -287,11 +285,12 @@ def service_page(provider_id):
         rating = int(request.form.get("rating", 0))
         comment = request.form.get("comment", "")
 
-        query_one(
-            "INSERT INTO ratings (provider_id, customer_name, rating, comment) "
-            "VALUES (%s, %s, %s, %s)",
-            (provider_id, customer_name, rating, comment)
-        )
+        supabase.table("ratings").insert({
+            "provider_id": provider_id,
+            "customer_name": customer_name,
+            "rating": rating,
+            "comment": comment
+        }).execute()
 
         flash("Thank you for your feedback!", "success")
         return redirect(url_for("service_page", provider_id=provider_id))
@@ -310,10 +309,8 @@ def service_page(provider_id):
 def request_service(provider_id):
     print("Request Service Route Hit", provider_id)
 
-    provider = query_one(
-        "SELECT name, phone FROM providers WHERE id = %s",
-        (provider_id,)
-    )
+    res = supabase.table("providers").select("name, phone").eq("id", provider_id).execute()
+    provider = res.data[0] if res.data else None
 
     if not provider:
         flash("Laundry service not found", "error")
@@ -341,13 +338,13 @@ def request_service(provider_id):
 # -------------------------
 @app.route("/review/<token>", methods=["GET", "POST"])
 def leave_review(token):
-    record = query_one(
-        """
-        SELECT * FROM review_tokens
-        WHERE token = %s AND expires_at > %s
-        """,
-        (token, datetime.utcnow())
-    )
+    res = supabase.table("review_tokens") \
+    .select("*") \
+    .eq("token", token) \
+    .filter("expires_at", "gt", datetime.utcnow().isoformat()) \
+    .execute()
+
+    record = res.data[0] if res.data else None
 
     if not record:
         return "Review link invalid or expired", 403
@@ -360,24 +357,19 @@ def leave_review(token):
         comment = request.form.get("comment", "")
 
         # Insert review
-        query_one(
-            """
-            INSERT INTO ratings (provider_id, customer_name, rating, comment)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (provider_id, name, rating, comment)
-        )
+        supabase.table("ratings").insert({
+            "provider_id": provider_id,
+            "customer_name": name,
+            "rating": rating,
+            "comment": comment
+        }).execute()
 
         # Delete token after use
-        query_one(
-            "DELETE FROM review_tokens WHERE token = %s",
-            (token,)
-        )
+        supabase.table("review_tokens").delete().eq("token", token).execute()
 
-        flash("Thank you for your review!", "success")
-        return redirect(url_for("service_page", provider_id=provider_id))
+        return render_template("leave_review.html", show_thank_you=True, redirect_url=url_for("service_page", provider_id=provider_id))
 
-    return render_template("leave_review.html")
+    return render_template("leave_review.html", show_thank_you=False)
 
 
 # -------------------------
@@ -398,30 +390,24 @@ def forgot_password():
 
     if request.method == "POST":
         phone = request.form.get("phone")
-        provider = query_one(
-            "SELECT * FROM providers WHERE phone = %s",
-            (phone,)
-        )
+
+        res = supabase.table("providers").select("*").eq("phone", phone).execute()
+        provider = res.data[0] if res.data else None
 
         if provider:
             raw_token = secrets.token_urlsafe(32)
             token_hash = generate_password_hash(raw_token)
-            expires_at = datetime.utcnow() + timedelta(minutes=5)
+            expires_at = (datetime.utcnow() + timedelta(minutes=5)).isoformat()
 
             # Remove old tokens
-            query_one(
-                "DELETE FROM password_resets WHERE provider_id = %s",
-                (provider["id"],)
-            )
+            supabase.table("password_resets").delete().eq("provider_id", provider["id"]).execute()
 
             # Insert new token
-            query_one(
-                """
-                INSERT INTO password_resets (provider_id, token_hash, expires_at)
-                VALUES (%s, %s, %s)
-                """,
-                (provider["id"], token_hash, expires_at)
-            )
+            supabase.table("password_resets").insert({
+                "provider_id": provider["id"],
+                "token_hash": token_hash,
+                "expires_at": expires_at
+            }).execute()
 
             reset_link = url_for("reset_password", token=raw_token, _external=True)
 
@@ -436,10 +422,7 @@ def forgot_password():
 @app.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     # Fetch all non-expired reset tokens
-    resets = query_all(
-        "SELECT * FROM password_resets WHERE expires_at > %s",
-        (datetime.utcnow(),)
-    )
+    resets = supabase.table("password_resets").select("*").filter("expires_at", "gt", datetime.utcnow()).execute().data
 
     match = None
     for r in resets:
@@ -466,16 +449,12 @@ def reset_password(token):
         password_hash = generate_password_hash(new_password)
 
         # Update provider password
-        query_one(
-            "UPDATE providers SET password=%s WHERE id=%s",
-            (password_hash, match["provider_id"])
-        )
+        supabase.table("providers").update({
+            "password": password_hash
+        }).eq("id", match["provider_id"]).execute()
 
         # Delete used reset token
-        query_one(
-            "DELETE FROM password_resets WHERE id=%s",
-            (match["id"],)
-        )
+        supabase.table("password_resets").delete().eq("id", match["id"]).execute()
 
         flash("Password updated successfully! You can now log in.", "success")
         return redirect(url_for("login"))

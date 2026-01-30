@@ -12,7 +12,7 @@
     <!-- Update Details Form -->
     <form method="POST" enctype="multipart/form-data"
           action="{{ url_for('owner_dashboard', provider_id=provider['id']) }}">
-        {{ csrf_token()  }}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()  }}">
       <!-- TWO COLUMN GRID -->
       <div class="form-grid">
 

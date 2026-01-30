@@ -54,7 +54,7 @@
         <!-- REQUEST SERVICE BUTTON -->
         <div class="service-action">
           <a
-            href="https://wa.me/{{ provider.phone }}?text=Hello%20I%20found%20your%20laundry%20service%20on%20Campus%20Laundry%20Services.%20I%20would%20like%20to%20request%20laundry%20service."
+            href="{{ url_for('request_service', provider_id=provider.id) }}"
             target="_blank"
             class="btn-request"
           >
@@ -85,7 +85,12 @@
         {% if feedbacks %}
           {% for f in feedbacks %}
             <div class="feedback-item">
-              <p><strong>{{ f.customer_name }}:</strong> {{ f.comment }}</p>
+              <p><strong>{{ f.customer_name }}:</strong></p>
+              <p class="rating-stars">
+                {% for i in range(f.rating) %}★{% endfor %}
+                {% for i in range(5 - f.rating) %}☆{% endfor %}
+              </p>
+              <p>{{ f.comment }}</p>
             </div>
           {% endfor %}
         {% else %}

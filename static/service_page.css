@@ -156,8 +156,10 @@ body {
   margin-bottom: 12px;
 }
 
-.feedback-item strong {
+.feedback-item p.rating-stars {
   color: #00796b;
+  margin: 4px 0;
+  font-size: 16px;
 }
 
 /* ===============================
