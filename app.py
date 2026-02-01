@@ -195,7 +195,9 @@ def register():
         }
 
         res = supabase.table("providers").insert(data).execute()
-
+        if not res.data:
+            flash("Registration failed. Please try again.", "error")
+            return redirect("/register")
         provider = res.data[0]
         provider_id = provider["id"]
 
