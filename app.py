@@ -390,7 +390,7 @@ def request_service(provider_id):
 
     message = (
         f"Hi {provider['name']}! \n"
-        f"I found your service on Campus Laundry and would like to request laundry service.\n\n"
+        f"I found your service on LaundroLink and would like to request laundry service.\n\n"
         f"Could you please let me know your availability and pickup details? Thanks!"
 
         f"After the service, I will leave you a review:\n{review_link}"
