@@ -152,7 +152,8 @@ def register():
         area = request.form["area"]
         price = float(request.form["price"])
         delivery = float(request.form["delivery"])
-        services = request.form["services"]
+        services = request.form.get("services")
+        services = ",".join(services)
         phone = request.form["phone"]
         password = request.form["password"]
         description = request.form.get("description", "")
