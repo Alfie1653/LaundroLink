@@ -193,13 +193,9 @@ def register():
             "description": description,
             "profile_pic": filename
         }
+    
+        res = supabase.table("providers").insert(data).execute()
 
-        try:
-            res = supabase.table("providers").insert(data).execute()
-        except Exception as e:
-            flash("Registration failed. Please try again.", "error")
-            return redirect("/register")
-        
         provider = res.data[0]
         provider_id = provider["id"]
 
