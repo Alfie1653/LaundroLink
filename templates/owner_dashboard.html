@@ -32,8 +32,7 @@
           <input id="delivery" name="delivery" type="text" value="{{ provider['delivery_fee'] }}" required>
 
           <label for="services">Services Offered</label>
-          <input id="services" name="services" type="text" value="{{ provider['services'] }}" required>
-
+          <p>{{ provider.services_display }}</p>
           <label for="description">Laundry Description</label>
           <textarea id="description" name="description" rows="4">{{ provider['description'] }}</textarea>
         </div>

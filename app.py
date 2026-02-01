@@ -152,8 +152,10 @@ def register():
         area = request.form["area"]
         price = float(request.form["price"])
         delivery = float(request.form["delivery"])
-        services = request.form.get("services")
-        services = ",".join(services)
+
+        services = request.form.getlist("services")
+        services = ", ".join(services)
+
         phone = request.form["phone"]
         password = request.form["password"]
         description = request.form.get("description", "")
@@ -260,7 +262,8 @@ def owner_dashboard(provider_id):
         area = request.form["area"]
         price = request.form["price"]
         delivery = request.form["delivery"]
-        services = request.form["services"]
+        services = request.form.getlist("services")
+        services = ", ".join(services)
         phone = request.form["phone"]
         country_code = request.form.get("country_code", "+254")
         description = request.form.get("description", "")
@@ -297,6 +300,25 @@ def owner_dashboard(provider_id):
         flash("Details updated successfully!", "success")
         return redirect(url_for("owner_dashboard", provider_id=provider_id))
 
+    # ===== Convert stored service values to readable labels =====
+    service_map = {
+        "wash_fold": "Wash & Fold",
+        "wash_iron": "Wash & Iron",
+        "ironing_only": "Ironing Only",
+        "bedding_duvet": "Bedding & Duvet Cleaning",
+        "curtains": "Curtains Cleaning",
+        "carpet": "Carpet Cleaning",
+        "shoes": "Shoes Cleaning",
+        "leather": "Leather Garments Cleaning",
+        "dry_cleaning": "Dry Cleaning",
+        "stain_removal": "Stain Removal"
+    }
+
+    services_values = provider["services"].split(",") if provider["services"] else []
+    services_labels = [service_map.get(s.strip(), s.strip()) for s in services_values]
+    provider["services_display"] = ", ".join(services_labels)
+
+    # Render template
     return render_template(
         "owner_dashboard.html",
         provider=provider,
@@ -312,6 +334,15 @@ def service_page(provider_id):
 
     res = supabase.table("providers").select("*").eq("id", provider_id).execute()
     provider = res.data[0] if res.data else None
+
+    # Convert services to comma-separated string
+    services = provider.get("services", "")
+    if isinstance(services, list):
+        # If it's already a list, join with comma
+        provider["services_str"] = ", ".join(services)
+    else:
+        # It's a string, use as-is
+        provider["services_str"] = services
 
     res = supabase.table("ratings").select("*").eq("provider_id", provider_id).order("created_at", desc=True).limit(1).execute()
     feedbacks = res.data
