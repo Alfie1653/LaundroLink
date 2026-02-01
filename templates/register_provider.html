@@ -3,6 +3,8 @@
 <head>
   <title>Register Laundry Service</title>
   <link rel="stylesheet" href="/static/register.css">
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <link rel="icon" href="/static/favicon.png">
   <style>
     /* Flash message style */
@@ -109,7 +111,20 @@
       <!-- Right Column -->
       <div class="form-right">
         <label for="services">Services Offered</label>
-        <input id="services" name="services" type="text" required>
+        <div class="services-wrapper">
+            <select id="services" name="services" multiple>
+                <option value="wash_fold">Wash & Fold</option>
+                <option value="wash_iron">Wash & Iron</option>
+                <option value="ironing_only">Ironing Only</option>
+                <option value="bedding_duvet">Bedding & Duvet Cleaning</option>
+                <option value="curtains">Curtains Cleaning</option>
+                <option value="carpet">Carpet Cleaning</option>
+                <option value="shoes">Shoes Cleaning</option>
+                <option value="leather">Leather Garments Cleaning</option>
+                <option value="dry_cleaning">Dry Cleaning</option>
+                <option value="stain_removal">Stain Removal</option>
+            </select>
+        </div>
 
         <label for="phone">Phone Number</label>
         <div class="phone-group">
@@ -191,6 +206,40 @@
         uploadBox.querySelector('p').textContent = fileInput.files[0].name;
       }
     });
+  </script>
+
+  <script>
+  const servicesSelect = document.getElementById('services');
+  const servicesWrapper = document.querySelector('.services-wrapper');
+
+  const choices = new Choices(servicesSelect, {
+    removeItemButton: true,      
+    maxItemCount: 10,            
+    placeholderValue: 'Select services',
+    searchEnabled: true,         
+    shouldSort: false,           
+    duplicateItemsAllowed: false,
+    itemSelectText: '',
+    
+    // ===== Custom search filter =====
+    searchFn: function (searchValue, option) {
+      // Convert both to lowercase for case-insensitive matching
+      const optionText = option.label.toLowerCase();
+      const search = searchValue.toLowerCase();
+
+      // Only match if the option starts with the search value
+      return optionText.startsWith(search);
+    }
+  });
+
+  // Hide caret when dropdown is open
+  servicesSelect.addEventListener('showDropdown', () => {
+    servicesWrapper.classList.add('active');
+  });
+
+  servicesSelect.addEventListener('hideDropdown', () => {
+    servicesWrapper.classList.remove('active');
+  });
   </script>
 
 </body>
